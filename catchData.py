@@ -1,3 +1,26 @@
+# -*- coding: utf-8 -*-
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
+import unittest, time, re, sys
+from bs4 import BeautifulSoup
+import requests
+import os, io
+
+driver = webdriver.Chrome('C:\Users\BigData\Desktop\chromedriver.exe')
+#將已存檔案製成列表
+if os.path.isfile("C:/judicial/list2.txt"):
+    os.remove("C:/judicial/list2.txt") 
+open_list=os.listdir (u"C:/judicial/")
+#print open_list[0] #IndexError
+list = io.open(u'C:/judicial/list.txt','a+',encoding='utf-8')
+
+for reading in range (0,len(open_list)):
+    list.write((open_list[reading]+'\n'))
+    print 'checkpoint1'
 #list.seek(0,0)#游標移回開頭讀取
 cont=list.read()
 list.close()
