@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import requests
 import os, io
 
-driver = webdriver.Chrome('C:\Users\wen\Desktop\chromedriver.exe')
+driver = webdriver.Chrome('C:\Users\BigData\Desktop\chromedriver.exe')
 #將已存檔案製成列表
 if os.path.isfile("C:/judicial/list2.txt"):
     os.remove("C:/judicial/list2.txt") 
@@ -20,20 +20,22 @@ list = io.open(u'C:/judicial/list.txt','a+',encoding='utf-8')
 
 for reading in range (0,len(open_list)):
     list.write((open_list[reading]+'\n'))
+    print 'checkpoint1'
 #list.seek(0,0)#游標移回開頭讀取
 cont=list.read()
 list.close()
 months=['1','2','3','4','5','6','7','8','9','10','11','12']
 days=['31','29','31','30','31','30','31','31','30','31','30','31']
 #-------------------------------------------------------
-for year in range(91,105):
+for year in range(89,105):
     month=1
     day=1
     interval_month=3 #每次取幾個月，請給可整除12個月的數字，不然會少抓資料
+    print 'checkpoint2'
     for mon in range(1,((12/interval_month)+1)):
         driver.get('http://jirs.judicial.gov.tw/FJUD/FJUDQRY01_1.aspx')
         driver.implicitly_wait(30)
-        Select(driver.find_element_by_name("v_court")).select_by_visible_text(u"臺灣嘉義地方法院")
+        Select(driver.find_element_by_name("v_court")).select_by_visible_text(u"臺灣澎湖地方法院")
         driver.find_elements_by_name('v_sys')[1].click()
         driver.find_element_by_id("jt").clear()
         driver.find_element_by_id("jt").send_keys(u"離婚")
@@ -57,13 +59,18 @@ for year in range(91,105):
         raw_page=driver.page_source
         #範圍錯誤處理
         over_num=re.findall(u'超出 200 筆',raw_page)
+        print 'checkpoint3'
         if(len(over_num)!=0):
             print (u'請修正範圍')
             driver.close()
             print('check2')
             sys.exit()
+
         page=re.search(u'共\s+(\d+)\s+筆 / 每頁\s+(\d+)\s+筆 / 共\s+(\d+)\s+頁 / 現在第\s+(\d+)\s+頁',raw_page)
-        for pages in range(1,int(page.group(3))):
+        total_page=int(page.group(3))
+        print 'checkpoint4'
+        for pages in range(1,total_page+1):
+            print 'checkpoint5'
             time.sleep(5)
             raw_page=driver.page_source
             #n=re.findall(u"裁判\D",raw_page)
@@ -87,14 +94,16 @@ for year in range(91,105):
             'Accept-Encoding':'gzip, deflate',
             'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
-
+            print 'checkpoint6'
             for row in range(0,index):
+                print 'checkpoint7'
                 list = open('C:/judicial/list.txt','r')
                 cont=list.read()
                 list.close()
                 finding=re.findall(((get_word[row])+".txt").encode('utf-8'),cont)
                 #print len(finding)
                 if(len(finding)==0):
+                    print 'checkpoint8'
                     name=get_word[row]
                     print name
                     replace_url=re.sub("amp;", "", raw_url[row])
@@ -111,8 +120,10 @@ for year in range(91,105):
                         print (name.encode('utf-8'))
                         sys.exit()
                     #print res.text
-                    soup = BeautifulSoup(res.text.encode('utf-8'))
-                           
+                    #soup = BeautifulSoup(res.text.encode('utf-8'))
+                    
+                    soup = BeautifulSoup(res.text.encode('utf-8'), "html.parser")
+       
                     #print soup
                     f = open('C:/judicial/%s.txt' %(soup.findAll('td')[6].text), 'w')
                     for i in range(5,11):
@@ -127,10 +138,10 @@ for year in range(91,105):
                     list2 = open('C:/judicial/list2.txt','a+')
                     list2.write((name+'.txt').encode('utf-8')+'\n')
                     list2.close()
-            if int(page.group(3))!=1:
+            if total_page>1:
+                print 'checkpoint9'
                 driver.find_element_by_link_text(u"下一頁").click()
                 time.sleep(8)
 
 os.remove("C:/judicial/list.txt")  
 driver.close()
-        
