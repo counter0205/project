@@ -20,7 +20,7 @@ list = io.open(u'C:/judicial/list.txt','a+',encoding='utf-8')
 
 for reading in range (0,len(open_list)):
     list.write((open_list[reading]+'\n'))
-    print 'checkpoint1'
+    #print 'checkpoint1'
 #list.seek(0,0)#游標移回開頭讀取
 cont=list.read()
 list.close()
@@ -31,7 +31,7 @@ for year in range(89,105):
     month=1
     day=1
     interval_month=3 #每次取幾個月，請給可整除12個月的數字，不然會少抓資料
-    print 'checkpoint2'
+    #print 'checkpoint2'
     for mon in range(1,((12/interval_month)+1)):
         driver.get('http://jirs.judicial.gov.tw/FJUD/FJUDQRY01_1.aspx')
         driver.implicitly_wait(30)
@@ -59,7 +59,7 @@ for year in range(89,105):
         raw_page=driver.page_source
         #範圍錯誤處理
         over_num=re.findall(u'超出 200 筆',raw_page)
-        print 'checkpoint3'
+        #print 'checkpoint3'
         if(len(over_num)!=0):
             print (u'請修正範圍')
             driver.close()
@@ -68,9 +68,9 @@ for year in range(89,105):
 
         page=re.search(u'共\s+(\d+)\s+筆 / 每頁\s+(\d+)\s+筆 / 共\s+(\d+)\s+頁 / 現在第\s+(\d+)\s+頁',raw_page)
         total_page=int(page.group(3))
-        print 'checkpoint4'
+        #print 'checkpoint4'
         for pages in range(1,total_page+1):
-            print 'checkpoint5'
+            #print 'checkpoint5'
             time.sleep(5)
             raw_page=driver.page_source
             #n=re.findall(u"裁判\D",raw_page)
@@ -94,16 +94,16 @@ for year in range(89,105):
             'Accept-Encoding':'gzip, deflate',
             'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
-            print 'checkpoint6'
+            #print 'checkpoint6'
             for row in range(0,index):
-                print 'checkpoint7'
+                #print 'checkpoint7'
                 list = open('C:/judicial/list.txt','r')
                 cont=list.read()
                 list.close()
                 finding=re.findall(((get_word[row])+".txt").encode('utf-8'),cont)
                 #print len(finding)
                 if(len(finding)==0):
-                    print 'checkpoint8'
+                    #print 'checkpoint8'
                     name=get_word[row]
                     print name
                     replace_url=re.sub("amp;", "", raw_url[row])
@@ -139,7 +139,7 @@ for year in range(89,105):
                     list2.write((name+'.txt').encode('utf-8')+'\n')
                     list2.close()
             if total_page>1:
-                print 'checkpoint9'
+                #print 'checkpoint9'
                 driver.find_element_by_link_text(u"下一頁").click()
                 time.sleep(8)
 
