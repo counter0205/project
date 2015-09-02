@@ -10,13 +10,13 @@ from bs4 import BeautifulSoup
 import requests
 import os, io
 
-driver = webdriver.Chrome('C:\Users\BigData\Desktop\chromedriver.exe')
+driver = webdriver.Chrome('C:/Users/BigData/Desktop/chromedriver.exe')
 #將已存檔案製成列表
-if os.path.isfile("C:/judicial/list2.txt"):
-    os.remove("C:/judicial/list2.txt") 
-open_list=os.listdir (u"C:/judicial/")
+if os.path.isfile("/judicial/list2.txt"):
+    os.remove("/judicial/list2.txt") 
+open_list=os.listdir (u"/judicial/")
 #print open_list[0] #IndexError
-list = io.open(u'C:/judicial/list.txt','a+',encoding='utf-8')
+list = io.open(u'/judicial/list.txt','a+',encoding='utf-8')
 
 for reading in range (0,len(open_list)):
     list.write((open_list[reading]+'\n'))
@@ -99,7 +99,7 @@ for year in range(89,105):
             #print 'checkpoint6'
             for row in range(0,index):
                 #print 'checkpoint7'
-                list = open('C:/judicial/list.txt','r')
+                list = open('/judicial/list.txt','r')
                 cont=list.read()
                 list.close()
                 finding=re.findall(((get_word[row])+".txt").encode('utf-8'),cont)
@@ -130,21 +130,21 @@ for year in range(89,105):
                     #print soup
                
                     if len(judgement)==1:
-                        f = open('C:/judicial/%s.txt' %(soup.findAll('td')[6].text), 'w')
+                        f = open('/judicial/%s.txt' %(soup.findAll('td')[6].text), 'w')
                         for i in range(5,11):
                             f.write(soup.findAll('td')[i].text.encode('utf-8'))
                             if i % 2 == 0:
                                 f.write('\n')
                         f.write(soup.findAll('td')[13].text.encode('utf-8'))
                         f.close()
-                        list = open('C:/judicial/list.txt','a+')
+                        list = open('/judicial/list.txt','a+')
                         list.write((name+'.txt').encode('utf-8')+'\n')
                         list.close()
-                        list2 = open('C:/judicial/list2.txt','a+')
+                        list2 = open('/judicial/list2.txt','a+')
                         list2.write((name+'.txt').encode('utf-8')+'\n')
                         list2.close()
                     elif len(ruling)==1:
-                        list_ruling = open('C:/judicial/list_ruling.txt','a+')
+                        list_ruling = open('/judicial/list_ruling.txt','a+')
                         list_ruling.write((name+'.txt').encode('utf-8')+'\n')
                     else:
                         print 'checkprocess'
@@ -153,5 +153,5 @@ for year in range(89,105):
                 driver.find_element_by_link_text(u"下一頁").click()
                 time.sleep(8)
 
-os.remove("C:/judicial/list.txt")  
+os.remove("/judicial/list.txt")  
 driver.close()
