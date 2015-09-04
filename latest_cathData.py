@@ -11,8 +11,10 @@ import requests
 import os, io
 
 driver = webdriver.Chrome('C:/Users/BigData/Desktop/chromedriver.exe')
+#driver = webdriver.Firefox()
 #將已存檔案製成列表
-
+if os.path.isfile(u'c:/judicial/list.txt'):
+    os.remove(u'c:/judicial/list.txt') 
 open_judgement=os.listdir (u"c:/judicial/judgement")
 open_ruling=os.listdir (u"c:/judicial/ruling")
 open_unknown=os.listdir (u"c:/judicial/unknown")
@@ -32,19 +34,19 @@ list.close()
 months=['1','2','3','4','5','6','7','8','9','10','11','12']
 days=['31','29','31','30','31','30','31','31','30','31','30','31']
 #法院名稱：最高法院,臺灣高等法院,臺灣高等法院 臺中分院,臺灣高等法院 臺南分院,臺灣高等法院 高雄分院,臺灣高等法院 花蓮分院
-#臺灣臺北地方法院,*臺灣士林地方法院,臺灣新北地方法院,*臺灣宜蘭地方法院,*臺灣基隆地方法院,臺灣桃園地方法院,臺灣新竹地方法院,臺灣苗栗地方法院
-#臺灣臺中地方法院,*臺灣彰化地方法院,臺灣南投地方法院,臺灣雲林地方法院,臺灣嘉義地方法院,臺灣臺南地方法院,臺灣高雄地方法院,*臺灣花蓮地方法院
-#臺灣臺東地方法院,*臺灣屏東地方法院,*臺灣澎湖地方法院,福建高等法院金門分院,福建金門地方法院,*福建連江地方法院,臺灣高雄少年及家事法院
+#*臺灣臺北地方法院,*臺灣士林地方法院,*臺灣新北地方法院,*臺灣宜蘭地方法院,*臺灣基隆地方法院,臺灣桃園地方法院,臺灣新竹地方法院,臺灣苗栗地方法院
+#臺灣臺中地方法院,*臺灣彰化地方法院,*臺灣南投地方法院,臺灣臺南地方法院,臺灣高雄地方法院,*臺灣花蓮地方法院,臺灣雲林地方法院,臺灣嘉義地方法院
+#*臺灣臺東地方法院,*臺灣屏東地方法院,*臺灣澎湖地方法院,福建高等法院金門分院,福建金門地方法院,*福建連江地方法院,臺灣高雄少年及家事法院
 
-court=u'臺灣新北地方法院' #請輸入法院名稱
+court=u'臺灣雲林地方法院' #請輸入法院名稱
 
 court_search=re.search(u'臺灣(\D+)法院',court)
 court1=court_search.group(1)
 #-------------------------------------------------------
 for year in range(89,105):
-    month=7
+    month=1
     day=1
-    interval_month=3 #每次取幾個月，請給可整除剩餘月份的數字，不然會少抓資料
+    interval_month=4 #每次取幾個月，請給可整除剩餘月份的數字，不然會少抓資料
     #print 'checkpoint2'
     for mon in range(0,((12-month+1)/interval_month)):
         driver.get('http://jirs.judicial.gov.tw/FJUD/FJUDQRY01_1.aspx')
@@ -101,7 +103,21 @@ for year in range(89,105):
             raw_url=re.findall('FJUDQRY03_1.aspx\?id=\S{4,300}cw=0',raw_page)
             #print raw_url[index]
             #確認檔案是否抓過
-
+            
+            #cookie1="FJUDQRY01_1=BB3BACA0/18/0/1/0/0/0//0////%u96E2%u5A5A/103/11/1/103/11/30/////20141101/20141130/%u96E2%u5A5A////; ASP.NET_SessionId=who0n555ctwvu2q5nvxajnes; NCI__Judicial_Jirs=667c45d200005000"
+            
+            head1={
+                'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Encoding':'gzip, deflate, sdch',
+                'Accept-Language':'zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4',
+                'Connection':'keep-alive',           
+                'Host':'jirs.judicial.gov.tw',
+                'Referer':'http://jirs.judicial.gov.tw/FJUD/FJUDQRY02_1.aspx',
+                'Upgrade-Insecure-Requests':'1',
+                'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
+                #,'cookie':cookie1
+            }
+                     
             head4={
             'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0',
             'Referer':'http://jirs.judicial.gov.tw/FJUD/FJUDQRY02_1.aspx',
@@ -111,6 +127,8 @@ for year in range(89,105):
             'Accept-Encoding':'gzip, deflate',
             'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             }
+            
+            
             #print 'checkpoint6'
             for row in range(0,index):
                 #print 'checkpoint7'
@@ -130,7 +148,7 @@ for year in range(89,105):
                     final_url=re.sub('^','http://jirs.judicial.gov.tw/FJUD/',replace_url)
                     #print final_url
                     url=final_url
-                    res=requests.get(url,headers=head4)
+                    res=requests.get(url,headers=head1)
 
                     ruling=re.findall(u'<pre>[^0-9]+法院(民事|家事)裁定',res.text)
                     judgement=re.findall(u'<pre>[^0-9]+法院(民事|家事)判決',res.text)                 
@@ -197,7 +215,7 @@ for year in range(89,105):
             if total_page>1 and total_page!=now_page:
                 #print 'checkpoint9'
                 driver.find_element_by_link_text(u"下一頁").click()
-                time.sleep(8)
+                time.sleep(3)
 os.remove("c:/judicial/list.txt")  
 print '順利抓完，恭喜'                                 
 driver.close()
